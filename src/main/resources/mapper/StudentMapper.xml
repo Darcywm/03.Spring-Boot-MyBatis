@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.springboot.mapper.StudentMapper">
+    <resultMap id="studentMap" type="com.springboot.entity.Student">
+        <result column="SNO" property="sno"/>
+        <result column="SNAME" property="name"/>
+        <result column="SSEX" property="sex"/>
+    </resultMap>
+
+    <select id="findBySno" resultMap="studentMap">
+        SELECT * from student where sno = #{sno}
+    </select>
+
+
+    <select id="list" resultMap="studentMap">
+        SELECT * from student
+        <if test="keyword != null">
+          where sname like concat('%',#{keyword},'%')
+        </if>
+    </select>
+
+
+    <insert id="create">
+        INSERT into student(SNO, SNAME, SSEX) VALUES (#{sno}, #{name}, #{sex})
+    </insert>
+
+    <update id="update">
+        UPDATE student set sname = #{name}, ssex=#{sex} where sno = #{sno}
+    </update>
+
+
+    <delete id="delete">
+        delete from student where SNO = #{sno}
+    </delete>
+</mapper>
