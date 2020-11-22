@@ -1,9 +1,14 @@
 package com.springboot.controller;
 
+import com.github.pagehelper.util.StringUtil;
+import com.springboot.common.CommonEnum;
+import com.springboot.common.ResponseDo;
 import com.springboot.entity.Student;
+import com.springboot.exception.BusinessException;
 import com.springboot.service.StudentService;
 import com.springboot.util.PageRequest;
 import com.springboot.util.PageResult;
+import com.springboot.util.ResponseUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -25,21 +30,21 @@ public class StudentController {
     private StudentService studentService;
 
     @GetMapping(value = "/{sno}")
-    public Student queryStudentBySno(@PathVariable(value = "sno") String sno) {
+    public ResponseDo queryStudentBySno(@PathVariable(value = "sno") String sno) {
         log.debug("hello");
-        return studentService.findBySno(sno);
+        return ResponseUtils.success(studentService.findBySno(sno));
     }
 
 
     // url上的参数为自动绑定成对象
     @GetMapping(value = "/list")
-    public PageResult list(PageRequest pageRequest, String keyword) {
-        return studentService.list(pageRequest, keyword);
+    public ResponseDo list(@RequestBody PageRequest pageRequest, String keyword) {
+        return ResponseUtils.success(studentService.list(pageRequest, keyword));
     }
 
     @PostMapping(value = "/")
-    public int create(@RequestBody Student student) {
-        return studentService.create(student);
+    public ResponseDo create(@RequestBody Student student) {
+        return ResponseUtils.success(studentService.create(student));
     }
 
 
@@ -48,13 +53,16 @@ public class StudentController {
     所以这里是有bug的
      */
     @PostMapping(value = "/{sno}")
-    public int update(Student student) {
-        return studentService.update(student);
+    public ResponseDo update(Student student){
+        if(StringUtil.isEmpty(student.getName())){
+            throw new BusinessException(CommonEnum.IS_NULL);
+        }
+        return ResponseUtils.success(studentService.update(student));
     }
 
     @DeleteMapping(value = "/{sno}")
-    public int delete(@PathVariable(value = "sno") String sno) {
-        return studentService.delete(sno);
+    public ResponseDo delete(@PathVariable(value = "sno") String sno) {
+        return ResponseUtils.success(studentService.delete(sno));
     }
 
 
